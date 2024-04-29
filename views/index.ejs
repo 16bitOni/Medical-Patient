@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+     <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Welcome <span id="name"></span></a>
+            <ul id="nav-mobile" class="right ">
+                <!-- Logout button -->
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <div id="patient-info-container">
+                <h3>Patient Details:</h3>
+                <table class="striped">
+                    <tbody>
+                        <tr>
+                            <td>First Name:</td>
+                            <td><span id="firstNamePlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Last Name:</td>
+                            <td><span id="lastNamePlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Date of Birth:</td>
+                            <td><span id="dobPlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sex:</td>
+                            <td><span id="sexPlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Height:</td>
+                            <td><span id="heightPlaceholder"></span> cm</td>
+                        </tr>
+                        <tr>
+                            <td>Weight:</td>
+                            <td><span id="weightPlaceholder"></span> kg</td>
+                        </tr>
+                        <tr>
+                            <td>Marital Status:</td>
+                            <td><span id="maritalStatusPlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Contact Number:</td>
+                            <td><span id="contactNumberPlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Email:</td>
+                            <td><span id="emailPlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Emergency Number:</td>
+                            <td><span id="emergencyNumberPlaceholder"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Adhar Number:</td>
+                            <td><span id="adharNoPlaceholder"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+        <div class="card" id="prescription-container">
+            <!-- Prescription cards will be added here dynamically -->
+        </div>
+
+    </div>
+ <div id="qr-modal-popup" class="modal">
+        <div id="qr-modal-popup" class="modal-content center-align">
+            <span class="close">&times;</span>
+            <h4 id="qr-title">Scan the QR code </h4>
+            <img id="qr-code-popup-img" src="" alt="QR Code">
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./script/index.js"></script>
+    <script data-prescription="<%= data %>">
+        const prescriptionData = JSON.parse(document.currentScript.dataset.prescription);
+
+// Call the displayPatientInfo function with patientData
+displayPatientInfo(prescriptionData.patientData);
+
+// Call the createCards function with prescriptionData
+createCards(prescriptionData.prescriptionData);
+
+
+// index.js
+
+// Function to display patient information
+function displayPatientInfo(patientData) {
+    // Update HTML elements with patient data
+    document.getElementById('firstNamePlaceholder').textContent = patientData.FirstName;
+    document.getElementById('name').textContent = patientData.FirstName;
+    document.getElementById('lastNamePlaceholder').textContent = patientData.lastName;
+    document.getElementById('dobPlaceholder').textContent = patientData.DOB;
+    document.getElementById('sexPlaceholder').textContent = patientData.Sex;
+    document.getElementById('heightPlaceholder').textContent = patientData.Height;
+    document.getElementById('weightPlaceholder').textContent = patientData.Weight;
+    document.getElementById('maritalStatusPlaceholder').textContent = patientData.MaritialStatus;
+    document.getElementById('contactNumberPlaceholder').textContent = patientData.ContactNumber;
+    document.getElementById('emailPlaceholder').textContent = patientData.Email;
+    document.getElementById('emergencyNumberPlaceholder').textContent = patientData.EmergencyNumber;
+    document.getElementById('adharNoPlaceholder').textContent = patientData.AdharNo;
+
+    // Show the patient info container
+    document.getElementById('patient-info-container').style.display = 'block';
+}
+
+// Function to create cards for prescriptions
+function createCards(prescriptionData) {
+    // Iterate through each prescription
+    prescriptionData.forEach(prescription => {
+        // Extract prescription data
+        const review = prescription.review;
+        const medicalRequirements = prescription.medicalRequirements;
+        const medicines = prescription.medicines;
+        const createdAt = new Date(prescription.createdAt).toLocaleString('en-US', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+
+        // Create HTML for medicines table
+        let medicinesTable = `
+            <table class="medicines-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Medicine Name</th>
+                        <th>ID</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        // Iterate through each medicine in the prescription
+        medicines.forEach(medicine => {
+            // Extract medicine data
+            const medicineName = medicine.medicineName;
+            const rank = medicine.rank;
+            const quantity = medicine.quantity;
+            const ID = medicine.id;
+
+            // Append medicine data to the table
+            medicinesTable += `
+                <tr>
+                    <td>${rank}</td>
+                    <td>${medicineName}</td>
+                    <td>${ID}</td>
+                    <td>${quantity}</td>
+                </tr>
+            `;
+        });
+        medicinesTable += `
+                </tbody>
+            </table>
+        `;
+
+        // Create HTML for the card
+        const prescriptionContainer = document.getElementById('prescription-container');
+        const newCard = document.createElement('div');
+        newCard.classList.add('card');
+newCard.innerHTML = `
+    <div class="card-content">
+        <body class="blur-background">
+        <table class="highlight">
+            <button class="btn qr-btn ">Generate QR Code</button>
+            <tbody>
+                <tr>
+                    <th style="width: 150px;">Review:</th>
+                    <td style="width: calc(100% - 100px);">${review}</td>
+                </tr>
+                <tr>
+                    <th style="width: 150px;">Medical Requirements</th>
+                    <td style="width: calc(100% - 100px);">${medicalRequirements}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h4>Prescribed Medicines</h4>
+        ${medicinesTable}
+        <p>Created At: ${createdAt}</p>
+        </body>
+    </div>
+        
+    </div>
+
+ 
+`;
+        
+        prescriptionContainer.appendChild(newCard);
+
+       const qrButton = newCard.querySelector('.qr-btn');
+       qrButton.addEventListener('click', function() {
+    // Generate QR code containing medicine IDs and quantities
+    const qrData = medicines.map(medicine => `${medicine.id}:${medicine.quantity}:${medicine.price}`).join(',');
+    const qrCodeUrl = generateQRCode(qrData);
+   
+    console.log(qrCodeUrl)
+});
+    });
+}
+// Function to handle QR code generation
+function generateQRCode(data) {
+  fetch('/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ data: data })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (!data || !data.qrUrl) {
+      throw new Error('QR code URL is missing in the response');
+    }
+    const qrUrl = data.qrUrl;
+    console.log(qrUrl);
+    displayQRCodeInPopup(qrUrl);
+  })
+  .catch(error => {
+    console.error('There was a problem with your fetch operation:', error);
+  });
+}
+
+
+
+// Function to display QR code in modal popup
+function displayQRCodeInPopup(qrCodeUrl) {
+    const qrModalPopup = document.getElementById('qr-modal-popup');
+    //alert(qrCodeUrl);
+    document.getElementById('qr-code-popup-img').src =qrCodeUrl;
+   // qrCodeImg.src = qrCodeUrl;
+    qrModalPopup.classList.add('open');
+}
+
+// Function to close modal popup
+function closePopupModal() {
+    const qrModalPopup = document.getElementById('qr-modal-popup');
+    qrModalPopup.classList.remove('open');
+}
+
+// Add event listener to close modal popup when close button is clicked
+const closeButtons = document.querySelectorAll('.close');
+closeButtons.forEach(button => {
+    button.addEventListener('click', closePopupModal);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems, options);
+    });
+
+    </script>
+    
+</body>
+</html>
