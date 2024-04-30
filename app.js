@@ -80,10 +80,11 @@ app.post('/register', async (req, res) => {
     }
     const newUser = new User({ aadhar, password });
     await newUser.save();
-    res.status(201).json({ message: 'Signup successful' });
+    res,redirect("/");
+   // res.status(201).json({ message: 'Signup successful' });
   } catch (err) {
-    console.error("Registration error:", err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.alert("Registration error:", err);
+    //res.status(500).json({ message: 'Internal server error' });
   }
 });
 

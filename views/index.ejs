@@ -135,6 +135,7 @@ function createCards(prescriptionData) {
             minute: 'numeric',
             hour12: true
         });
+        const docname = prescription.docname;
 
         // Create HTML for medicines table
         let medicinesTable = `
@@ -182,6 +183,10 @@ newCard.innerHTML = `
         <table class="highlight">
             <button class="btn qr-btn ">Generate QR Code</button>
             <tbody>
+                <tr>
+                    <th style="width: 150px;">Prescribed By:</th>
+                    <td style="width: calc(100% - 100px);">${docname}</td>
+                </tr>
                 <tr>
                     <th style="width: 150px;">Review:</th>
                     <td style="width: calc(100% - 100px);">${review}</td>

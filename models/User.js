@@ -52,7 +52,8 @@ const prescriptionSchema = new mongoose.Schema({
       createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    docname:String,
 });
 
 // Create a model for the prescription schema
